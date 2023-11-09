@@ -3,10 +3,9 @@
 
 #include "memalloc.h" 							
 
-extern void *original_brk;			//Você precisa ter a variável global que armazena o valor de brk como um extern aqui.
-									//No código de teste estou chamandando de original_brk, mas se utilizarem outro nome,
-									//substituir as ocorrências por ele aqui.
-
+//extern void *original_brk;	//Você precisa ter a variável global que armazena o valor de brk como um extern aqui.
+				//No código de teste estou chamandando de original_brk, mas se utilizarem outro nome,
+				//substituir as ocorrências por ele aqui.
 
 void double_alloc_after_free(void **pointers_array){
 	pointers_array[1] = memory_alloc(50);
