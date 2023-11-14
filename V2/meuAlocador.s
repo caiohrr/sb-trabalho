@@ -7,17 +7,20 @@
 .global _start
 
 setup_brk:
-	pushq %rbp
-	movq %rsp, %rbp
+        pushq %rbp
+        movq %rsp, %rbp
 
-	movq $12, %rax
-	syscall
+        # Syscall brk, retorna o valor atual da brk
+        movq $0, %rdi
+        movq $12, %rax
+        syscall
 
-	movq %rdi, original_brk
-	movq %rdi, current_brk
-	
-	popq %rbp
-	ret
+        movq %rax, original_brk
+        movq %rax, current_brk
+
+        popq %rbp
+        ret
+
 
 dismiss_brk:
 	pushq %rbp
@@ -36,24 +39,17 @@ rudimentaryAlloc:
 	pushq %rbp
 	movq %rsp, %rbp
 
-	movq 24(%rbp), %rax
-	movq current_brk, %rsi
+	addq current_brk, %rdi
+	addq $16, %rdi
 
-	addq $16, %rsi
-	addq %rax, %rsi
-
-	movq %rsi, %rdi
 	movq $12, %rax
 	syscall
 
-	subq %rax, %rsi
-	subq $8, %rsi
-	movq %rax, (%rsi)
-	subq $8, %rsi
-	movq $1, (%rsi)
-	addq $16, %rsi
+	movq current_brk, %rax
+	addq $16, %rax
 
-	movq %rsi, %rax
+	movq $1, -16(%rax)
+	movq %rdi, -8(%rax)
 
 	popq %rbp
 	ret	
@@ -62,7 +58,7 @@ _start:
 
 	call setup_brk
 	
-	pushq $100
+	movq $10, %rdi
 	call rudimentaryAlloc
 
 	call dismiss_brk
