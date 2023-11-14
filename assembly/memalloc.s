@@ -11,16 +11,30 @@ memory_alloc:
         movq %rsp, %rbp
 
 
+        movq $6969, %r13
         # Copiar o valor do parâmetro (bytes alocados) em r10
         movq %rdi, %r10
 
         # %r11 será usado como valor temporário
-        movq current_brk, %r11
+        movq original_brk, %r11
 
 _inicio_while:
         cmp %r11, current_brk
         jge _fim_while
-        
+
+        cmpq $0, (%r11)
+        jne _fora_if
+        addq $8, %r11
+        cmp (%r11), %rdi
+        jl _fora_if
+
+        movq $1, -8(%r11)
+
+        addq $8, %r11
+        movq %r11, %rax
+        ret 
+
+_fora_if:
         movq -8(%r11), %r12
         addq %r12, %r11
         jmp _inicio_while
@@ -38,8 +52,14 @@ _fim_while:
         # Adiciona o tamanho do registro em current brk
         addq $16, current_brk
 
-        # Coloca o valor de current brk em %rax para retorná-lo
-        movq current_brk, %rax
+        # Salva o inicio do bloco (sem contar o registro) para retornar depois
+        movq current_brk, %rbx
+
+        # Coloca o novo valor de brk em current_brk retornado em %rax depois da syscall
+        movq %rax, current_brk
+
+        # Coloca o valor do inicio do bloco para ser retornado em %rax
+        movq %rbx, %rax
 
         # Escreve o registro de memoria
         movq $1, -16(%rax)
