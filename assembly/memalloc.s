@@ -5,7 +5,7 @@
         current_brk: .quad 0
         
 .section .text
-.global _start
+#.global _start
 
 .global memory_alloc
 memory_alloc:
@@ -18,24 +18,29 @@ memory_alloc:
         # Copiar o valor do parâmetro (bytes alocados) em r10
         movq %rdi, %r10
 
+        movq current_brk, %rcx
+
         # %r13 será usado como valor temporário
         movq original_brk, %r13
-
-        movq current_brk, %rcx
 
 _inicio_while:
         cmp %r13, %rcx
         jge _fim_while
 
         movq $22222, %r15
+
+        movq (%r13), %r14
         # Testa se o bloco esta em uso
-        cmpq $0, (%r13)
-        jne _fora_if
+        cmp $1, %r14
+        je _fora_if
+
         movq $33333, %r15
+
         addq $8, %r13
         # Testa se há memoria disponível no bloco
         cmp (%r13), %rdi
         jl _fora_if
+
         movq $44444, %r15
 
         # Marca o bloco como usado
@@ -91,16 +96,16 @@ _fim_while:
         movq $12, %rax
         syscall
 
-        # Adiciona o tamanho do registro em current brk
+        # Ad#iciona o tamanho do registro em current brk
         addq $16, current_brk
 
-        # Salva o inicio do bloco (sem contar o registro) para retornar depois
+        # Salva o inicio do bloco (após o registro) para retornar depois
         movq current_brk, %rbx
 
         # Coloca o novo valor de brk em current_brk retornado em %rax depois da syscall
         movq %rax, current_brk
 
-        # Coloca o valor do inicio do bloco para ser retornado em %rax
+        # Coloca o valor do início do bloco para ser retornado em %rax
         movq %rbx, %rax
 
         # Escreve o registro de memoria
