@@ -18,10 +18,10 @@ int main() {
 
         void *ptr1 = memory_alloc(alloc_size);
 
-        printf("%llu\n", (long long unsigned int*)ptr1);
+        printf("ptr1 = %llu\n", (long long unsigned int*)ptr1);
 
         void *ptr2 = memory_alloc(alloc_size * 4);
-        printf("%llu\n", (long long unsigned int *)ptr2);
+        printf("ptr2 = %llu\n", (long long unsigned int *)ptr2);
 
         int *ptr = (int *)ptr1;
 
@@ -31,9 +31,9 @@ int main() {
 
         //printf("Uso = %lld, Bytes = %lld\n", *(long long *)(ptr1 - 16), *(long long *)(ptr1 - 8));
 
-        for (int i = 0; i < alloc_size / sizeof(int); i++) {
-                printf("%d, ", ptr[i]);
-        }
+        //for (int i = 0; i < alloc_size / sizeof(int); i++) {
+        //        printf("%d, ", ptr[i]);
+        //}
 
 
         printf("\n(ptr1)Uso = %lld, Bytes = %lld\n", *(long long *)(ptr1 - 16), *(long long *)(ptr1 - 8));
@@ -43,6 +43,8 @@ int main() {
         printf("\n(ptr1, depois do free)Uso = %lld, Bytes = %lld\n", *(long long *)(ptr1 - 16), *(long long *)(ptr1 - 8));
 
         void *ptr3 = memory_alloc(69);
+        
+        printf("\noriginal_brk = %lld, current_brk = %lld\n", (long long *)original_brk, (long long *)current_brk);
 
         printf("\n(ptr1, depois do alloc)Uso = %lld, Bytes = %lld\n", *(long long *)(ptr1 - 16), *(long long *)(ptr1 - 8));
         printf("ptr1 = %llu\n", (long long unsigned int*)ptr1);
@@ -52,9 +54,9 @@ int main() {
 
 
 
-        printf("\n(ptr2)Uso = %lld, Bytes = %lld\n", *(long long *)(ptr2 - 16), *(long long *)(ptr2 - 8));
-
-        printf("\nRet = %d\n", ret);
-
+//        printf("\n(ptr2)Uso = %lld, Bytes = %lld\n", *(long long *)(ptr2 - 16), *(long long *)(ptr2 - 8));
+//
+//        printf("\nRet = %d\n", ret);
+//
         return 0;
 }

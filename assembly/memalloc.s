@@ -1,8 +1,11 @@
 .section .data
+.global original_brk
         original_brk: .quad 0
+.global current_brk 
         current_brk: .quad 0
         
 .section .text
+.global _start
 
 .global memory_alloc
 memory_alloc:
@@ -10,33 +13,72 @@ memory_alloc:
         pushq %rbp
         movq %rsp, %rbp
 
+        movq $11111, %r15
 
-        movq $6969, %r13
         # Copiar o valor do parâmetro (bytes alocados) em r10
         movq %rdi, %r10
 
-        # %r11 será usado como valor temporário
-        movq original_brk, %r11
+        # %r13 será usado como valor temporário
+        movq original_brk, %r13
+
+        movq current_brk, %rcx
 
 _inicio_while:
-        cmp %r11, current_brk
+        cmp %r13, %rcx
         jge _fim_while
 
-        cmpq $0, (%r11)
+        movq $22222, %r15
+        # Testa se o bloco esta em uso
+        cmpq $0, (%r13)
         jne _fora_if
-        addq $8, %r11
-        cmp (%r11), %rdi
+        movq $33333, %r15
+        addq $8, %r13
+        # Testa se há memoria disponível no bloco
+        cmp (%r13), %rdi
         jl _fora_if
+        movq $44444, %r15
 
-        movq $1, -8(%r11)
+        # Marca o bloco como usado
+        movq $1, -8(%r13)
 
+        # Testa se é possível criar um segundo bloco com o que sobrou de memória
+        movq (%r13), %r8
+        subq %rdi, %r8
+        subq $16, %r8
+        cmp $1, %r8
+        jl _fora_if_2
+
+        # Coloca o tamanho antigo do bloco em %r9 (r9 = oldSize)
+        movq (%r13), %r9
+        
+        # tmp_brk + 8 = bytes
+        movq %rdi, (%r13)
+
+        # %r11 tem o endereço onde o novo registro de memória está sendo escrito
+        movq %r13, %r11
+        addq %rdi, %r11
         addq $8, %r11
-        movq %r11, %rax
+ 
+        # Marca o novo registro como não usado
+        movq $0, (%r11)
+        
+        # Calcula o valor do novo bloco em %r9
+        subq %rdi, %r9
+        subq $16, %r9
+        addq $8, %r11
+
+        # Escreve o valor do novo bloco no seu registro
+        movq %r9, (%r11)
+
+
+_fora_if_2:
+        addq $8, %r13
+        movq %r13, %rax
         ret 
 
 _fora_if:
-        movq -8(%r11), %r12
-        addq %r12, %r11
+        movq -8(%r13), %r12
+        addq %r12, %r13
         jmp _inicio_while
         
 _fim_while:
@@ -120,3 +162,12 @@ memory_free:
 
         popq %rbp
         ret
+
+#_start:
+#        call setup_brk
+#        addq $100, current_brk
+#        movq $50, %rdi
+#        call memory_alloc
+#
+#        movq $60, %rax
+#        syscall
