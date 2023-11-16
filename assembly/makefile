@@ -1,7 +1,7 @@
 CC := gcc
 CFLAGS := -no-pie -g
 
-teste:
+teste: memalloc.s teste.c
 	$(CC) memalloc.s teste.c $(CFLAGS) -o teste
 
 clean:

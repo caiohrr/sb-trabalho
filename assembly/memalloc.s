@@ -24,21 +24,21 @@ memory_alloc:
         movq original_brk, %r13
 
 _inicio_while:
-        cmp %r13, %rcx
+        cmp %rcx, %r13
         jge _fim_while
 
         movq $22222, %r15
 
-        movq (%r13), %r14
+        #movq (%r13), %r14
         # Testa se o bloco esta em uso
-        cmp $1, %r14
+        cmpq $1, (%r13)
         je _fora_if
 
         movq $33333, %r15
 
         addq $8, %r13
         # Testa se há memoria disponível no bloco
-        cmp (%r13), %rdi
+        cmp %rdi, (%r13)
         jl _fora_if
 
         movq $44444, %r15
@@ -79,10 +79,11 @@ _inicio_while:
 _fora_if_2:
         addq $8, %r13
         movq %r13, %rax
+        popq %rbp
         ret 
 
 _fora_if:
-        movq -8(%r13), %r12
+        movq (%r13), %r12
         addq %r12, %r13
         jmp _inicio_while
         

@@ -29,14 +29,14 @@ int main() {
         int alloc_size = 128;
 
         void *ptr1 = memory_alloc(alloc_size);
-        printf("ptr1 = memory_alloc(128)\n");
-        printHeap();
+        //printf("ptr1 = memory_alloc(128)\n");
+        //printHeap();
 
         //printf("ptr1 = %llu\n", (long long unsigned int*)ptr1);
 
         void *ptr2 = memory_alloc(alloc_size * 4);
-        printf("ptr2 = memory_alloc(512)\n");
-        printHeap();
+        //printf("ptr2 = memory_alloc(512)\n");
+        //printHeap();
 
         //printf("ptr2 = %llu\n", (long long unsigned int *)ptr2);
 
@@ -57,14 +57,14 @@ int main() {
 
 
         int ret = memory_free(ptr1);
-        printf("memory_free(ptr1)\n");
-        printHeap();
+        //printf("memory_free(ptr1)\n");
+       //printHeap();
 
 
         //printf("\n(ptr1, depois do free)Uso = %lld, Bytes = %lld\n", *(long long *)(ptr1 - 16), *(long long *)(ptr1 - 8));
 
         void *ptr3 = memory_alloc(69);
-        printf("ptr2 = memory_alloc(69)\n");
+        //printf("ptr2 = memory_alloc(69)\n");
         printHeap();
 
         
