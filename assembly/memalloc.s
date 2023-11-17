@@ -13,8 +13,6 @@ memory_alloc:
         pushq %rbp
         movq %rsp, %rbp
 
-        movq $11111, %r15
-
         # Copiar o valor do parâmetro (bytes alocados) em r10
         movq %rdi, %r10
 
@@ -27,21 +25,15 @@ _inicio_while:
         cmp %rcx, %r13
         jge _fim_while
 
-        movq $22222, %r15
-
         #movq (%r13), %r14
         # Testa se o bloco esta em uso
         cmpq $1, (%r13)
         je _fora_if
 
-        movq $33333, %r15
-
         addq $8, %r13
         # Testa se há memoria disponível no bloco
-        cmp %rdi, (%r13)
+        cmpq %rdi, (%r13)
         jl _fora_if
-
-        movq $44444, %r15
 
         # Marca o bloco como usado
         movq $1, -8(%r13)
@@ -83,7 +75,7 @@ _fora_if_2:
         ret 
 
 _fora_if:
-        movq (%r13), %r12
+        movq 8(%r13), %r12
         addq %r12, %r13
         jmp _inicio_while
         
@@ -158,10 +150,16 @@ memory_free:
         pushq %rbp
         movq %rsp, %rbp
         
+        cmp %rdi, current_brk
+        jl _fora_if_3
+
         # Marca o bloco de memória como não usado.
         # O endereço do bloco passado como parâmetro está em %rdi
         # e a quadword que indica o uso do bloco está 16 bytes atrás
         movq $0, -16(%rdi)
+
+
+_fora_if_3:
 
         # Retornar 0 em %rax
         movq $0, %rax
@@ -169,11 +167,3 @@ memory_free:
         popq %rbp
         ret
 
-#_start:
-#        call setup_brk
-#        addq $100, current_brk
-#        movq $50, %rdi
-#        call memory_alloc
-#
-#        movq $60, %rax
-#        syscall
