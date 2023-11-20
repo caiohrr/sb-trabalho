@@ -1,6 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "memalloc.h" 							
+					
+extern void *memory_alloc(long long bytes);
+
+extern void setup_brk();
+
+extern int memory_free(void *ptr);
+
+extern void *original_brk;
+
+extern void *current_brk;
 
 void double_alloc_after_free(void **pointers_array){
 	pointers_array[1] = memory_alloc(50);
