@@ -77,6 +77,7 @@ _fora_if_2:
 _fora_if:
         movq 8(%r13), %r12
         addq %r12, %r13
+        addq $16, %r13
         jmp _inicio_while
         
 _fim_while:
