@@ -28,7 +28,7 @@ void* memory_alloc(unsigned long int bytes){
 
 			/* Caso o tamanho do bloco atual menos os bytes pedidos e o tamanho das 2 quadwords for maior que 1
 			cria um segundo bloco */ 
-			if(*((unsigned long long int *)(tmp_brk+8))-bytes-16 >= 1){
+			if(*((unsigned long long int *)(tmp_brk+8))-bytes >= 17){
 				unsigned long long int oldSize = *((unsigned long long int*) (tmp_brk+8));
 
 				*((unsigned long long int *) (tmp_brk+8)) = bytes;

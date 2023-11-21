@@ -41,8 +41,9 @@ _inicio_while:
         # Testa se é possível criar um segundo bloco com o que sobrou de memória
         movq (%r13), %r8
         subq %rdi, %r8
-        subq $16, %r8
-        cmp $1, %r8
+        #subq $16, %r8
+        #cmp $1, %r8
+        cmp $17, %r8
         jl _fora_if_2
 
         # Coloca o tamanho antigo do bloco em %r9 (r9 = oldSize)

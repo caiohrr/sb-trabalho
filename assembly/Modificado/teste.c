@@ -26,7 +26,7 @@ int main() {
 
         setup_brk();
 	void *initial_brk = original_brk;
-	void *pnt_1, *pnt_2, *pnt_3, *pnt_4, *pnt_5, *pnt_6, *pnt_7;
+	void *pnt_1, *pnt_2, *pnt_3, *pnt_4;
 
 	pnt_1 = memory_alloc(100);
 	printf("==>> ALOCANDO UM ESPAÇO DE 100 BYTES:\n");
@@ -36,40 +36,28 @@ int main() {
 	printf("==>> ALOCANDO UM ESPAÇO DE 130 BYTES:\n");
         printHeap();
 
-	pnt_3 = memory_alloc(110);
-	printf("==>> ALOCANDO UM ESPAÇO DE 110 BYTES:\n");
-        printHeap();
-
-	pnt_4 = memory_alloc(120);
-	printf("==>> ALOCANDO UM ESPAÇO DE 120 BYTES:\n");
+	printf("==>> DESALOCANDO UM ESPAÇO DE 100 BYTES:\n");
+	memory_free(pnt_1);
         printHeap();
 
 	printf("==>> DESALOCANDO UM ESPAÇO DE 130 BYTES:\n");
 	memory_free(pnt_2);
         printHeap();
 
-	printf("==>> DESALOCANDO UM ESPAÇO DE 120 BYTES:\n");
-	memory_free(pnt_4);
+	pnt_3 = memory_alloc(24);
+	printf("==>> ALOCANDO UM ESPAÇO DE 24 BYTES:\n");
         printHeap();
 
-	pnt_5 = memory_alloc(50);
-	printf("==>> ALOCANDO UM ESPAÇO DE 50 BYTES:\n");
+	pnt_4 = memory_alloc(90);
+	printf("==>> ALOCANDO UM ESPAÇO DE 90 BYTES:\n");
         printHeap();
 
-	pnt_6 = memory_alloc(60);
-	printf("==>> ALOCANDO UM ESPAÇO DE 60 BYTES:\n");
-        printHeap();
-
-	pnt_7 = memory_alloc(150);
-	printf("==>> ALOCANDO UM ESPAÇO DE 150 BYTES:\n");
-        printHeap();
-
-	printf("==>> DESALOCANDO TUDO:\n");
-	memory_free(pnt_1);
+	printf("==>> DESALOCANDO UM ESPAÇO DE 24 BYTES:\n");
 	memory_free(pnt_3);
-	memory_free(pnt_5);
-	memory_free(pnt_6);
-	memory_free(pnt_7);
+        printHeap();
+
+	printf("==>> DESALOCANDO UM ESPAÇO DE 90 BYTES:\n");
+	memory_free(pnt_4);
         printHeap();
 
         return 0;

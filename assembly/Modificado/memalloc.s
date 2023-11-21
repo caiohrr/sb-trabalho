@@ -21,38 +21,58 @@ memory_alloc:
         # %r13 será usado como valor temporário
         movq original_brk, %r13
 
+        # %r14 = biggest_empty_block
+        movq %r13, %r14
+
 _inicio_while:
         cmp %rcx, %r13
         jge _fim_while
 
-        #movq (%r13), %r14
-        # Testa se o bloco esta em uso
+        # Testa se o bloco esta sendo usado
         cmpq $1, (%r13)
         je _fora_if
 
-        addq $8, %r13
+        # Testa se o bloco atual é maior que o maior bloco
+        # (maior bloco em %r14, e tamanho do bloco atual em %r15)
+        movq 8(%r13), %r15
+        cmpq 8(%r14), %r15
+        jle _fora_if
+
+        # Atualiza o endereco do maior bloco
+        movq %r13, %r14
+
+_fora_if:
+        movq 8(%r13), %r12
+        addq %r12, %r13
+        addq $16, %r13
+        jmp _inicio_while
+       
+_fim_while:
+        cmpq %r14, current_brk
+        je _fora_if_3
+
+        addq $8, %r14
         # Testa se há memoria disponível no bloco
-        cmpq %rdi, (%r13)
-        jl _fora_if
+        cmpq %rdi, (%r14)
+        jl _fora_if_3
 
         # Marca o bloco como usado
-        movq $1, -8(%r13)
+        movq $1, -8(%r14)
 
         # Testa se é possível criar um segundo bloco com o que sobrou de memória
-        movq (%r13), %r8
+        movq (%r14), %r8
         subq %rdi, %r8
-        subq $16, %r8
-        cmp $1, %r8
+        cmp $17, %r8
         jl _fora_if_2
 
         # Coloca o tamanho antigo do bloco em %r9 (r9 = oldSize)
-        movq (%r13), %r9
+        movq (%r14), %r9
         
-        # tmp_brk + 8 = bytes
-        movq %rdi, (%r13)
+        # biggest_empty_block + 8 = bytes
+        movq %rdi, (%r14)
 
         # %r11 tem o endereço onde o novo registro de memória está sendo escrito
-        movq %r13, %r11
+        movq %r14, %r11
         addq %rdi, %r11
         addq $8, %r11
  
@@ -69,18 +89,13 @@ _inicio_while:
 
 
 _fora_if_2:
-        addq $8, %r13
-        movq %r13, %rax
+        addq $8, %r14
+        movq %r14, %rax
         popq %rbp
         ret 
 
-_fora_if:
-        movq 8(%r13), %r12
-        addq %r12, %r13
-        addq $16, %r13
-        jmp _inicio_while
-        
-_fim_while:
+_fora_if_3:
+
         # Adiciona os 16 bytes do registro para o valor de bytes sendo
         # alocados (parâmetro passado em %rdi)
         addq current_brk, %rdi
@@ -152,7 +167,7 @@ memory_free:
         movq %rsp, %rbp
         
         cmp %rdi, current_brk
-        jl _fora_if_3
+        jl _fora_if_4
 
         # Marca o bloco de memória como não usado.
         # O endereço do bloco passado como parâmetro está em %rdi
@@ -160,7 +175,7 @@ memory_free:
         movq $0, -16(%rdi)
 
 
-_fora_if_3:
+_fora_if_4:
 
         # Retornar 0 em %rax
         movq $0, %rax
